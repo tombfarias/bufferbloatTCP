@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Box base Ubuntu 20.04 (compatível com Mininet)
+  config.vm.box = "ubuntu/focal64"
+
+  # Encaminha chave SSH
+  config.ssh.forward_agent = true
+
+  # Desativa X11 forwarding — desnecessário em ambiente headless
+  config.ssh.forward_x11 = false
+
+  # Sincroniza a pasta local bufferbloat com o diretório da VM
+  config.vm.synced_folder "./bufferbloat", "/home/vagrant/bufferbloat",
+                        type: "virtualbox",
+                        owner: "vagrant", group: "vagrant"
+
+  # Sincroniza a pasta local mininet (agora necessária)
+  config.vm.synced_folder "./mininet", "/home/vagrant/mininet",
+                        type: "virtualbox",
+                        owner: "vagrant", group: "vagrant"
+
+
+  # Recursos alocados para a VM
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 4096   # ou 6144 se houver RAM disponível
+    vb.cpus = 2
+    vb.gui = false     # desativa interface gráfica
+  end
+
+  # Executa o provisionamento com bootstrap.sh (sem privilégios)
+  config.vm.provision "shell", path: "bootstrap.sh", privileged: false
+end
+
