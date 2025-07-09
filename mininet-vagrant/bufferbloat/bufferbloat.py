@@ -183,7 +183,7 @@ def plotar_tempos(tempos):
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f'{args.dir}/graficos/grafico-tempos-distribuicao-q{args.maxq}.png')
+    plt.savefig(f'{args.dir}/graficos/grafico-tempos-distribuicao-{args.cong}-q{args.maxq}.png')
 
 def bufferbloat():
     if not os.path.exists(args.dir):

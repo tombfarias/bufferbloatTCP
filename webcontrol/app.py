@@ -75,15 +75,23 @@ def listar_graficos():
     resultados = {}
 
     if os.path.isdir(base_dir):
-        for pasta in os.listdir(base_dir):
+        for pasta in sorted(os.listdir(base_dir)):
             subdir = os.path.join(base_dir, pasta, "graficos")
             if os.path.isdir(subdir):
-                imagens = [f for f in os.listdir(subdir) if f.endswith(".png")]
-                if imagens:
-                    resultados[pasta] = imagens
+                graficos = {"bbr": [], "reno": [], "outros": []}
+                for f in sorted(os.listdir(subdir)):
+                    if not f.endswith(".png"):
+                        continue
+                    if f.startswith("bbr-"):
+                        graficos["bbr"].append(f)
+                    elif f.startswith("reno-"):
+                        graficos["reno"].append(f)
+                    else:
+                        graficos["outros"].append(f)
+                resultados[pasta] = graficos
 
     response.content_type = "application/json"
-    return json.dumps(resultados)
+    return json.dumps(resultados, indent=2)
 
 
 @route('/grafico/<cenario>/<filename>')

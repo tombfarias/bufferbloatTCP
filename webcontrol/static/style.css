@@ -117,3 +117,17 @@ pre#output {
 .grafico:hover {
     transform: scale(1.02);
 }
+
+.legenda {
+    font-size: 0.95em;
+    color: #555;
+    margin-top: 0.5em;
+    margin-bottom: 0.3em;
+    font-style: italic;
+}
+
+h4 {
+    margin-top: 1.2em;
+    margin-bottom: 0.5em;
+    color: #333;
+}
