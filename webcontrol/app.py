@@ -82,16 +82,21 @@ def listar_graficos():
                 for f in sorted(os.listdir(subdir)):
                     if not f.endswith(".png"):
                         continue
-                    if f.startswith("bbr-"):
+
+                    nome = f.lower()
+
+                    if nome.startswith("bbr-") or "bbr" in nome:
                         graficos["bbr"].append(f)
-                    elif f.startswith("reno-"):
+                    elif nome.startswith("reno-") or "reno" in nome:
                         graficos["reno"].append(f)
                     else:
                         graficos["outros"].append(f)
+
                 resultados[pasta] = graficos
 
     response.content_type = "application/json"
     return json.dumps(resultados, indent=2)
+
 
 
 @route('/grafico/<cenario>/<filename>')
