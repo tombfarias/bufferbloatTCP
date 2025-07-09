@@ -42,19 +42,13 @@ cd bufferbloatTCP
 
 ### 2. Execute o script de deploy
 
-No Linux:
+No Linux ou Windows (Git Bash):
 
 ```bash
 make start
 ```
 
-No Windows (Git Bash):
-
-```bash
-make start
-```
-
-> O comando acima detecta seu sistema automaticamente e roda `deploy.sh` ou `deploy.bat` conforme necessário.
+> O comando acima detecta seu sistema automaticamente e executa `deploy.sh` ou `deploy.bat` conforme necessário.
 
 ---
 
@@ -62,15 +56,18 @@ make start
 
 - Verifica se Vagrant e VirtualBox estão instalados.
 - Cria um ambiente virtual Python isolado (`.venv_bufferbloatTCP`).
-- Instala as dependências da interface Bottle.
+- Instala automaticamente a dependência Bottle.
 - Sobe a máquina virtual com Mininet.
-- Inicia a interface web em uma porta disponível (ex: http://localhost:5210).
+- Inicia a interface web em uma porta disponível (entre 5210 e 5660).
+- Se `--force` for usado, encerra o processo que estiver ocupando a porta.
+
+As portas são **reutilizadas** com segurança: se o script for encerrado ou interrompido, elas ficam livres novamente.
 
 ---
 
 ## Interface Web
 
-Acesse no navegador:
+Após a execução, acesse no navegador:
 
 ```
 http://localhost:5210
@@ -79,50 +76,40 @@ http://localhost:5210
 Você poderá:
 
 - Subir/desligar a VM
-- Testar conexão com `ping`
-- Rodar o experimento com congestionamento Reno ou BBR
-- Ver os gráficos gerados automaticamente
-- Acompanhar os logs de saída dos comandos
+- Testar conectividade com `ping`
+- Rodar experimentos com congestionamento Reno ou BBR
+- Visualizar os gráficos gerados automaticamente
+- Acompanhar os logs de saída
 
 ---
 
 ## Editando o Experimento
 
-Toda a lógica de rede está na pasta:
+Toda a lógica de rede está localizada na pasta:
 
 ```
 mininet-vagrant/bufferbloat/
 ```
 
-Você pode (e deve!) editar:
+Você pode editar:
 
 - Topologia da rede
 - Algoritmos testados
-- Scripts `run.sh` e `run-bbr.sh`
-- Plotagem dos resultados
-- Estratégias de medição
+- Scripts como `run.sh`, `run-reno.sh`, `run-bbr.sh`
+- Estratégias de medição e coleta de dados
+- Código de plotagem dos resultados
 
-O aplicativo **não impõe nenhuma limitação** sobre a lógica experimental. Ele serve como uma **ferramenta auxiliar** para facilitar a execução e a análise dos testes.
+Este projeto serve como uma **ferramenta auxiliar** para acelerar a prototipação e análise de experimentos. Nenhuma parte da lógica experimental é engessada.
 
 ---
 
 ## Comandos Úteis
 
 ```bash
-make run-reno   # Roda o experimento usando TCP Reno
-make run-bbr    # Roda o experimento usando TCP BBR
-make clean      # Remove arquivos de saída e gráficos antigos
-make backup     # Faz um backup local do projeto
-```
-
----
-
-## Limpeza Manual
-
-Para apagar todos os resultados gerados:
-
-```bash
-make clean
+make run-reno   # Executa o experimento usando TCP Reno
+make run-bbr    # Executa o experimento usando TCP BBR
+make clean      # Remove arquivos gerados (logs, gráficos, etc.)
+make backup     # Cria backup local da pasta bufferbloat
 ```
 
 ---
@@ -132,25 +119,39 @@ make clean
 ```
 bufferbloatTCP/
 │
-├── webcontrol/             # Código da interface Bottle
-│   ├── app.py              # Servidor Bottle
-│   ├── views/index.tpl     # Template da interface
-│   └── static/             # Estilo CSS
+├── webcontrol/             # Interface web em Bottle
+│   ├── app.py              # Código principal do servidor
+│   ├── views/index.tpl     # Template HTML
+│   └── static/             # CSS e recursos visuais
 │
-├── mininet-vagrant/        # VM com Mininet
+├── mininet-vagrant/        # Máquina virtual com Mininet
 │   └── bufferbloat/        # Lógica experimental modificável
 │
-├── deploy.sh               # Script de setup Linux
-├── deploy.bat              # Script de setup Windows
-├── Makefile                # Automação com make
+├── deploy.sh               # Script de setup para Linux
+├── deploy.bat              # Script de setup para Windows
+├── Makefile                # Comando `make start` e automações
 └── README.md               # Este arquivo
 ```
 
 ---
 
+## Observações sobre Portas e Processos
+
+- O servidor tenta usar as portas 5210, 5260, ..., 5660.
+- Se uma porta estiver ocupada e `--force` for passado, o processo será encerrado.
+- As portas **não ficam presas** após o uso: ao encerrar o script, elas são liberadas.
+- O comportamento é consistente no Linux e no Windows.
+
+---
+
 ## Contribuindo
 
-Este projeto foi desenhado para **aprender fazendo**. Sinta-se à vontade para adaptar o experimento, rodar novas configurações, automatizar análises e explorar novas soluções para o problema de bufferbloat.
+Este projeto foi desenhado para **aprender fazendo**. Sinta-se à vontade para:
+
+- Editar a lógica experimental
+- Automatizar análises de desempenho
+- Criar novos cenários de teste
+- Compartilhar melhorias com outros usuários
 
 ---
 
@@ -159,4 +160,4 @@ Este projeto foi desenhado para **aprender fazendo**. Sinta-se à vontade para a
 - [Vagrant + VirtualBox](https://www.vagrantup.com/)
 - [Mininet](http://mininet.org/)
 - [Bufferbloat.net](https://www.bufferbloat.net/)
-- [TCP Congestion Algorithms](https://en.wikipedia.org/wiki/TCP_congestion_control)
+- [TCP Congestion Algorithms (Wikipedia)](https://en.wikipedia.org/wiki/TCP_congestion_control)

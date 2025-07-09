@@ -14,18 +14,21 @@ define LINUX_MSG
 [INFO] Ambiente Linux/WSL detectado. Usando deploy.sh.
 endef
 
+# Variável opcional para argumentos adicionais
+ARGS ?=
+
 deploy:
 ifeq ($(IS_WINDOWS),MINGW)
 	@echo $(WINDOWS_MSG)
-	@cmd.exe /C deploy.bat
+	@cmd.exe /C deploy.bat $(ARGS)
 else ifneq ($(IS_WSL),)
 	@echo $(LINUX_MSG)
 	@chmod +x ./deploy.sh
-	@./deploy.sh
+	@./deploy.sh $(ARGS)
 else ifeq ($(IS_LINUX),Linux)
 	@echo $(LINUX_MSG)
 	@chmod +x ./deploy.sh
-	@./deploy.sh
+	@./deploy.sh $(ARGS)
 else
 	@echo "[ERRO] Sistema operacional não suportado automaticamente."
 	@echo "Rode manualmente ./deploy.sh ou deploy.bat conforme seu SO."

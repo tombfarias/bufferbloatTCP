@@ -34,5 +34,6 @@ mininet-vagrant/mininet/doc/html
 mininet-vagrant/mininet/doc/latex
 mininet-vagrant/mininet/trunk
 
+.bufferbloattcp-pids
 
 .venv_bufferbloatTCP

@@ -1,3 +1,4 @@
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
@@ -75,11 +76,10 @@ pre#output {
     border-radius: 6px;
     font-family: monospace;
     white-space: pre-wrap;
-    max-height: 400px; /* você pode aumentar ainda mais se quiser */
-    overflow-y: auto;  /* barra de rolagem vertical */
-    overflow-x: auto;  /* barra horizontal, se necessário */
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
 }
-
 
 /* Galeria */
 
@@ -101,13 +101,17 @@ pre#output {
 }
 
 .grafico {
-    max-width: 100%;
+    display: block;
+    width: 100%;
     height: auto;
+    max-height: 600px;
+    min-height: 300px;
     border: 1px solid #ccc;
     border-radius: 6px;
     margin: 0.5em 0;
     box-shadow: 0 0 6px rgba(0,0,0,0.08);
     transition: transform 0.2s ease;
+    object-fit: contain;
 }
 
 .grafico:hover {
