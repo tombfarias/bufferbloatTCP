@@ -15,9 +15,14 @@ fi
 
 # Verifica se o VirtualBox está instalado
 if ! command -v VBoxManage &> /dev/null; then
-  echo "[ERRO] VirtualBox não está instalado. Baixe em: https://www.virtualbox.org/"
-  exit 1
+  if [[ "$IS_WSL" == "1" ]]; then
+    echo "[AVISO] VBoxManage não visível no WSL, mas pode estar disponível no Windows."
+  else
+    echo "[ERRO] VirtualBox não está instalado. Baixe em: https://www.virtualbox.org/"
+    exit 1
+  fi
 fi
+
 
 # Cria o ambiente virtual se não existir
 if [[ ! -d "$VENV" ]]; then
