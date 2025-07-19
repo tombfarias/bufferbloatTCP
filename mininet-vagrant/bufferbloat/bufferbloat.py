@@ -22,12 +22,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 parser = ArgumentParser(description="Bufferbloat tests")
-parser.add_argument('--bw-host', '-B',
+parser.add_argument('--bwhost', '-B',
                     type=float,
                     help="Bandwidth of host links (Mb/s)",
                     default=1000)
 
-parser.add_argument('--bw-net', '-b',
+parser.add_argument('--bwnet', '-b',
                     type=float,
                     help="Bandwidth of bottleneck (network) link (Mb/s)",
                     required=True)
@@ -85,14 +85,14 @@ class BBTopo(Topo):
 
         # TODO: Add links with appropriate characteristics
         self.addLink(h1, roteador, 
-                     bw=1000, 
+                     bw=args.bwhost, 
                      delay="%sms" % args.delay,
                      use_htb=True)
         self.addLink(h2, roteador, 
-                     bw=1.5, 
+                     bw=args.bwnet, 
                      delay="%sms" % args.delay, 
                      max_queue_size=args.maxq,
-                     )
+                     use_htb=True)
 
 
 
@@ -119,7 +119,7 @@ def start_iperf(net):
 
     # TODO: Start the iperf client on h1.  Ensure that you create a
     # long lived TCP flow.
-    cliente = h1.popen(f"iperf -c {h1.IP()} -t {args.time} -i 1") 
+    cliente = h1.popen(f"iperf -c {h2.IP()} -t {args.time} -i 1") 
 
     print("iperf server running successfully!")
 
@@ -138,7 +138,11 @@ def start_ping(h1, h2):
     # to see how to do this.
 
     # pings
-    ping_c_to_s = h1.popen(f"ping -D -i 0.1 {h2.IP()} > {args.dir}/{args.cong}-ping.txt", shell=True)
+
+    ping_file = f"{args.dir}/{args.cong}-ping.txt"
+    info(f"* Starting ping train {h1}->{h2}...\n")
+    ping_c_to_s = h1.popen(f"ping -D -i 0.1 {h2.IP()} > {ping_file}", shell=True)
+
 
     return ping_c_to_s
 
@@ -147,23 +151,23 @@ def start_ping(h1, h2):
     # i.e. ping ... > /path/to/ping.
     
 
-def start_webserver(net):
-    servidor = net.get('h2')
+def start_webserver(servidor):
+
+    info(f"* Starting webserver on {servidor}...\n")
     proc = servidor.popen("python webserver.py", shell=True)
     sleep(1)
-
     print(f"webpage ready: {proc}")
     return [proc]
 
-# for _
 def pegar_pagina(cliente, servidor):
-        
-        resultado = cliente.popen(f"curl -o {args.dir}/web.txt -s -w %{{time_total}} http://{servidor.IP()}/index.html",
+        pagina_local = f"{args.dir}/web.txt"
+        endereco_servidor = f"http://{servidor.IP()}:8080/index.html"
+        resultado = cliente.popen(f"curl -o {pagina_local} -s -w %{{time_total}} {endereco_servidor}",
                                   stdout=PIPE,
                                   )
         tempo = resultado.communicate()[0].decode().strip()
 
-        print(tempo)
+        # print(tempo)
         return np.float32(tempo)
 
 def plotar_tempos(tempos):
@@ -183,12 +187,17 @@ def plotar_tempos(tempos):
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f'{args.dir}/graficos/grafico-tempos-distribuicao-{args.cong}-q{args.maxq}.png')
+    local_salvar = os.path.join(args.dir, 'graficos', f'grafico-tempos-distribuicao-{args.cong}-q{args.maxq}.png')
+
+    plt.savefig(local_salvar)
 
 def bufferbloat():
     if not os.path.exists(args.dir):
         os.makedirs(args.dir)
+
+    # Set TPC CC algorithm
     os.system("sysctl -w net.ipv4.tcp_congestion_control=%s" % args.cong)
+
     topo = BBTopo()
     net = Mininet(topo=topo, host=CPULimitedHost, link=TCLink)
     net.start()
@@ -209,12 +218,13 @@ def bufferbloat():
     # Depending on the order you add links to your network, this
     # number may be 1 or 2.  Ensure you use the correct number.
     qmon = start_qmon(iface=f's0-et{servidor}',
-                      outfile='%s/%s-q.txt' % (args.dir, args.cong))
+                      outfile=os.path.join(args.dir, '%s-q.txt' % (args.cong))
+                      )
 
 
     # TODO: Start iperf, webservers, etc.
     iperf_servidor, iperf_cliente = start_iperf(net) # Conexão tcp contínua
-    web = start_webserver(net)
+    web = start_webserver(servidor)
 
 
     # TODO: measure the time it takes to complete webpage transfer
@@ -252,9 +262,9 @@ def bufferbloat():
         now = time()
         delta = now - start_time
         if len(tempos) > 30 * 3 or delta > args.time:
-            print("Teste encerrado")
+            #print("Teste encerrado")
             break
-        print("%.1fs left..." % (args.time - delta))
+        #print("%.1fs left..." % (args.time - delta))
 
     ping.terminate()
 

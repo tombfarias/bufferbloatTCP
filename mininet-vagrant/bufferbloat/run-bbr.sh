@@ -10,9 +10,9 @@ export PATH="$HOME/.local/bin:$PATH"
 export PYTHONPATH="/home/vagrant/mininet:/home/vagrant/.local/lib/python3.8/site-packages:$PYTHONPATH"
 
 # Parâmetros de simulação
-time=90          # duração do experimento em segundos
+time=40       # duração do experimento em segundos
 bwnet=1.5        # banda do link em Mbps
-delay=5       # atraso de cada link em ms (5ms + 5ms = 10ms RTT)
+delay=20          # atraso de cada link em ms (5ms + 5ms = 10ms RTT)
 iperf_port=5001  # porta padrão do iperf3
 
 # Limpa execuções anteriores do Mininet e reinicia OVS
@@ -30,13 +30,15 @@ free -m
 
 # Loop sobre diferentes tamanhos de fila (buffer)
 for qsize in 20 100; do
-    dir=bb-q$qsize
+    dir=bufferbloat/bb-q$qsize
 
     # Cria diretório e remove arquivos antigos
+    find "$dir" -type f -delete
+    find "$dir/graficos" -type f -delete
+
     mkdir -p "$dir"
     mkdir -p "$dir/graficos"
 
-    rm -f "$dir/q.txt" "$dir/bbr-q.txt" "$dir/bbr-ping.txt" "$dir/web.txt" 2>/dev/null
 
     touch "$dir/bbr-q.txt"
     touch "$dir/bbr-ping.txt"

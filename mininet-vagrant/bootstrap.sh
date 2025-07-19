@@ -19,7 +19,7 @@ sudo apt-get update -y
 
 # Instala dependências básicas
 sudo apt-get install -y \
-   iperf3 python3-pip build-essential cgroup-tools \
+   iperf python3-pip build-essential cgroup-tools \
    openvswitch-switch openvswitch-testcontroller help2man \
    net-tools curl git
 

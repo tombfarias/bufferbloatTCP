@@ -36,7 +36,7 @@ Antes de tudo, instale os seguintes componentes conforme seu sistema operacional
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/bufferbloatTCP.git
+git clone https://github.com/tombfarias/bufferbloatTCP.git
 cd bufferbloatTCP
 ```
 

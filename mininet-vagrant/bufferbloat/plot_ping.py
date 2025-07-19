@@ -48,13 +48,15 @@ fig = figure()
 ax = fig.add_subplot(111)
 for i, f in enumerate(args.files):
     data = parse_ping(f)
-    xaxis = list(map(float, list(col(0, data))))
-    start_time = xaxis[0]
-    xaxis = list(map(lambda x: (x - start_time) / args.freq, xaxis))
-    qlens = list(map(float, col(1, data)))
-
-    ax.plot(xaxis, qlens, lw=2)
-    ax.xaxis.set_major_locator(MaxNLocator(4))
+    # print(f"Data: {data}")
+    if len(data) != 0:
+        xaxis = list(map(float, list(col(0, data))))
+        start_time = xaxis[0]
+        xaxis = list(map(lambda x: (x - start_time) / args.freq, xaxis))
+        qlens = list(map(float, col(1, data)))
+    
+        ax.plot(xaxis, qlens, lw=2)
+        ax.xaxis.set_major_locator(MaxNLocator(4))
 
 plt.ylabel("RTT (ms)")
 plt.grid(True)

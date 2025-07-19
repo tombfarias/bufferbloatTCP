@@ -117,3 +117,71 @@ pre#output {
 .grafico:hover {
     transform: scale(1.02);
 }
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 10px;
+    background-color: #222;
+    padding: 1em 0 0 0;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 12px 24px;
+    color: #ccc;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-button:hover {
+    color: #fff;
+}
+
+.tab-button.active {
+    color: white;
+    border-bottom: 3px solid #0077cc;
+}
+
+.controle-competicao {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start; /* Alinha os textos à esquerda */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.controle-slider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.controle-slider label {
+  font-weight: bold;
+  width: 40px; /* valor fixo para alinhar todos os labels */
+  text-align: right;
+}
+
+.controle-slider input[type="range"] {
+  flex: 1;
+  max-width: 220px;
+}
+
+.controle-slider span {
+  font-family: monospace;
+  width: 25px;
+  text-align: left;
+}
+
